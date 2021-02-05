@@ -159,3 +159,138 @@ db.zips.find({"state": "NY", "city": "ALBANY"}).pretty()	// 美化输出
 - `find()`用来返回一个cursor和匹配的查询结果
 - `count()`返回查询的数量
 - `pretty()`格式化输出文档
+
+## :house:创建和操作文档
+
+### :point_right:插入新的文档
+
+在mongodb atlas中:point_down:
+
+![image-20210205162702074](F:\learning_mongodb\imgs\insertIntoAtlas.png)
+
+
+
+:key:`_id` - 每个文档都必须有一个唯一的`_id`值
+
+#### ObjectId()
+
+> `_id`字段的默认值，除非指定
+
+Example:
+
+```json
+"_id": ObjectId("5e222d45a5f2f457b")
+
+"_id": "710ca992"
+
+"_id": "101-EXG-27"
+```
+
+
+
+#### :key:Insert() and errors
+
+```shell
+db.inspections.findOne();	# 获取一个随机的文档
+```
+
+```shell
+db.inspections.insert({"_id": ObjectId(), "id": "123"}) # 插入文档
+```
+
+:key:如果插入的文档没有`_id`字段，mongdb会在插入文档前自动添加`_id`字段。
+
+
+
+#### Order
+
+```shell
+db.inspection.insert(
+[{"_id": 1, "test": 1}, {"_id": 2, "test": 2}, {"_id": 3, "test": 3}],
+{"ordered": false}
+)
+```
+
+使用`{"ordered": false}`来取消默认的插入顺序。
+
+> - `ordered` 默认为`true`，即顺序写入。设置为`false`的时候，表示乱序写入，可以提高操作性能。
+> - 假如批量插入多条数据的话，`ordered` 为 `true`，则插入过程中报错的话，后面的插入就会中断
+> - 假如批量插入多条数据的话，`ordered` 为`false`，则插入过程中报错的话，后面的插入会照常执行
+>
+> ——CSDN
+
+---
+
+:mag:`database`和`collection`会被自动创建，当使用`use`, 并且`insert`时​
+
+
+
+### :point_right:更新文档
+
+#### 在Atlas中:point_down:
+
+![image-20210205190517714](imgs\updateIntoAltas.png)
+
+
+
+#### mongo shell
+
+> Updating Documents: **MQL**
+
+:point_down:
+
+一些函数
+
+| One         | Many         |
+| ----------- | ------------ |
+| updateOne() | updateMany() |
+| findOne()   | find()       |
+
+
+
+#### :key:更新操作
+
+```json
+{"$inc": {"pop": 10, "<field2>": "<increment value>", ...}}		// 字段的值增加指定的数字
+ 
+{"$set": {"pop": 17630, "<field2>": "<increment value>", ...}}	// 设置字段的值
+
+{"$push": {<field1>: <value1>, ...}}							// 添加一个元素到数组字段
+```
+
+
+
+例如
+
+set
+
+```json
+db.zips.updateOne({"zip": "12534"}, {"$set": {"pop": 17630}})
+```
+
+push
+
+```json
+db.grades.updateOne({"student_id": 250, "class_id": 399}, 
+                    {"$push": {"scores": {"type": "extra credit",
+                                          "score": 100}
+                              }
+                    })
+```
+
+
+
+### :point_right:删除文档和集合
+
+- deleteOne()
+- deleteMany()
+
+:key:删除collection使用`drop()`
+
+```shell
+db.inspection.drop()
+```
+
+
+
+## 高级CRUD
